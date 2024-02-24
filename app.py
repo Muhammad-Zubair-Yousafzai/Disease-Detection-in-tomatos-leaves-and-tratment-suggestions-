@@ -27,10 +27,11 @@ uploaded_file = st.file_uploader("Choose an image ...", type="jpg")
 if uploaded_file is not None:
     image = Image.open(uploaded_file)
     st.image(image, caption='Tomato Leaf Image')
-    image = image.resize((256,256))
-    img_batch = np.expand_dims(image, 0)
+    image = image.resize((256, 256))
+    img_array = np.array(image)
     
     # Get predictions
+    img_batch = np.expand_dims(image, 0)
     predictions = MODEL.predict(img_batch)
     predicted_class = CLASS_NAMES[np.argmax(predictions[0])]
     confidence = np.max(predictions[0])
@@ -60,15 +61,21 @@ if uploaded_file is not None:
         st.info('Remove all infected plants and destroy them. Do NOT put them in the compost pile, as the virus may persist in infected plant matter. Monitor the rest of your plants closely, especially those that were located near infected plants. Disinfect gardening tools after every use.')
     elif predicted_class == 'Tomato_healthy':
         st.info('Your plant is healthy, there is no need to apply medicines, please take care of your plants, if any disease occurs, than cure it fast and remove the infected leaves.')
-        
-    # Convert image to numpy array
-    img_array = np.array(image)
     
     # Plot in 3D RGB space
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
-    ax.scatter(img_array[:, :, 0].flatten(), img_array[:, :, 1].flatten(), img_array[:, :, 2].flatten(), c='r', marker='o')
-    ax.set_xlabel('Red')
-    ax.set_ylabel('Green')
-    ax.set_zlabel('Blue')
+    
+    # Create a grid of x, y, z coordinates
+    x, y = np.meshgrid(np.arange(img_array.shape[1]), np.arange(img_array.shape[0]))
+    r = img_array[:, :, 0]
+    g = img_array[:, :, 1]
+    b = img_array[:, :, 2]
+    
+    # Plot the surface for red channel
+    ax.plot_surface(x, y, r, cmap='Reds', linewidth=0)
+    ax.set_xlabel('X')
+    ax.set_ylabel('Y')
+    ax.set_zlabel('Red')
+
     st.pyplot(fig)

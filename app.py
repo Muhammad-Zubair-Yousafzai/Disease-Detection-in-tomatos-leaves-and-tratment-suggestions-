@@ -3,7 +3,6 @@ from PIL import Image
 import numpy as np
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
-import colorsys
 from keras.models import load_model
 
 st.set_page_config(page_title='Machine Learning App with Random Forest')
@@ -45,29 +44,31 @@ if uploaded_file is not None:
         st.info('A plant with bacterial spot cannot be cured. Remove symptomatic plants from the field or greenhouse to prevent the spread of bacteria to healthy plants. Burn, bury or hot compost the affected plants and DO NOT eat symptomatic fruit.')
     elif predicted_class == 'Tomato_Early_blight':
         st.info('Cure the plant quickly otherwise the diease can be spread, Thoroughly spray the plant (bottoms of leaves also) with Bonide Liquid Copper Fungicide concentrate or Bonide Tomato & Vegetable')
-    # Add other conditions for disease and medicine
-    
+    elif predicted_class == 'Tomato_Late_blight':
+        st.info('Spraying fungicides is the most effective way to prevent late blight. For conventional gardeners and commercial producers, protectant fungicides such as chlorothalonil (e.g., Bravo, Echo, Equus, or Daconil) and Mancozeb (Manzate) can be used.')
+    elif predicted_class == 'Tomato_Leaf_Mold':
+        st.info('Baking soda solution: Mix 1 tablespoon baking soda and ½ teaspoon liquid soap such as Castile soap (not detergent) in 1 gallon of water. Spray liberally, getting top and bottom leaf surfaces and any affected areas.')
+    elif predicted_class == 'Tomato_Septoria_leaf_spot':
+        st.info('fungicides with active ingredients such as chlorothalonil, copper, or mancozeb will help reduce disease, but they must be applied before disease occurs as they can only provide preventative protection. They will not cure the plant. If the disease has spread than remove the plants')
+    elif predicted_class == 'Tomato_Spider_mites_Two_spotted_spider_mite':
+        st.info('aiming a hard stream of water at infested plants to knock spider mites off the plants. Other options include insecticidal soaps, horticultural oils, or neem oil.')
+    elif predicted_class == 'Tomato__Target_Spot':
+        st.info('Products containing chlorothalonil, mancozeb, and copper oxychloride have been shown to provide good control of target spot in research trials.')
+    elif predicted_class == 'Tomato__Tomato_YellowLeaf__Curl_Virus':
+        st.info('Use a neonicotinoid insecticide, such as dinotefuran (Venom) imidacloprid (AdmirePro, Alias, Nuprid, Widow, and others) or thiamethoxam (Platinum), as a soil application or through the drip irrigation system at transplanting of tomatoes or peppers.')
+    elif predicted_class == 'Tomato__Tomato_mosaic_virus':
+        st.info('Remove all infected plants and destroy them. Do NOT put them in the compost pile, as the virus may persist in infected plant matter. Monitor the rest of your plants closely, especially those that were located near infected plants. Disinfect gardening tools after every use.')
+    elif predicted_class == 'Tomato_healthy':
+        st.info('Your plant is healthy, there is no need to apply medicines, please take care of your plants, if any disease occurs, than cure it fast and remove the infected leaves.')
+        
     # Convert image to numpy array
     img_array = np.array(image)
     
-    # Function to convert RGB image to HSV
-    def rgb_to_hsv(rgb):
-        return colorsys.rgb_to_hsv(rgb[0]/255, rgb[1]/255, rgb[2]/255)
-
-    # Convert RGB image to HSV
-    hsv_image = np.apply_along_axis(rgb_to_hsv, -1, img_array)
-    
-    # Extract HSV components
-    h = hsv_image[:, :, 0]
-    s = hsv_image[:, :, 1]
-    v = hsv_image[:, :, 2]
-    
-    # Plot in 3D HSV space
+    # Plot in 3D RGB space
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
-    ax.scatter(h.flatten(), s.flatten(), v.flatten(), c='r', marker='o')
-    ax.set_xlabel('Hue')
-    ax.set_ylabel('Saturation')
-    ax.set_zlabel('Value')
+    ax.scatter(img_array[:, :, 0].flatten(), img_array[:, :, 1].flatten(), img_array[:, :, 2].flatten(), c='r', marker='o')
+    ax.set_xlabel('Red')
+    ax.set_ylabel('Green')
+    ax.set_zlabel('Blue')
     st.pyplot(fig)
-

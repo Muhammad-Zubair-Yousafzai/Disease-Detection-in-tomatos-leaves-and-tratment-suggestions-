@@ -3,7 +3,6 @@ from PIL import Image
 import numpy as np
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
-import colorsys
 from keras.models import load_model
 
 st.set_page_config(page_title='Machine Learning App with Random Forest')
@@ -28,10 +27,11 @@ uploaded_file = st.file_uploader("Choose an image ...", type="jpg")
 if uploaded_file is not None:
     image = Image.open(uploaded_file)
     st.image(image, caption='Tomato Leaf Image')
-    image = image.resize((256,256))
-    img_batch = np.expand_dims(image, 0)
+    image = image.resize((256, 256))
+    img_array = np.array(image)
     
     # Get predictions
+    img_batch = np.expand_dims(image, 0)
     predictions = MODEL.predict(img_batch)
     predicted_class = CLASS_NAMES[np.argmax(predictions[0])]
     confidence = np.max(predictions[0])
@@ -44,15 +44,15 @@ if uploaded_file is not None:
     if predicted_class == 'Tomato_Bacterial_spot':
         st.info('A plant with bacterial spot cannot be cured. Remove symptomatic plants from the field or greenhouse to prevent the spread of bacteria to healthy plants. Burn, bury or hot compost the affected plants and DO NOT eat symptomatic fruit.')
     elif predicted_class == 'Tomato_Early_blight':
-        st.info('Cure the plant quickly otherwise the disease can be spread, Thoroughly spray the plant (bottoms of leaves also) with Bonide Liquid Copper Fungicide concentrate or Bonide Tomato & Vegetable')
+        st.info('Cure the plant quickly otherwise the diease can be spread, Thoroughly spray the plant (bottoms of leaves also) with Bonide Liquid Copper Fungicide concentrate or Bonide Tomato & Vegetable')
     elif predicted_class == 'Tomato_Late_blight':
         st.info('Spraying fungicides is the most effective way to prevent late blight. For conventional gardeners and commercial producers, protectant fungicides such as chlorothalonil (e.g., Bravo, Echo, Equus, or Daconil) and Mancozeb (Manzate) can be used.')
     elif predicted_class == 'Tomato_Leaf_Mold':
         st.info('Baking soda solution: Mix 1 tablespoon baking soda and ½ teaspoon liquid soap such as Castile soap (not detergent) in 1 gallon of water. Spray liberally, getting top and bottom leaf surfaces and any affected areas.')
     elif predicted_class == 'Tomato_Septoria_leaf_spot':
-        st.info('Fungicides with active ingredients such as chlorothalonil, copper, or mancozeb will help reduce disease, but they must be applied before disease occurs as they can only provide preventative protection. They will not cure the plant. If the disease has spread then remove the plants')
+        st.info('fungicides with active ingredients such as chlorothalonil, copper, or mancozeb will help reduce disease, but they must be applied before disease occurs as they can only provide preventative protection. They will not cure the plant. If the disease has spread than remove the plants')
     elif predicted_class == 'Tomato_Spider_mites_Two_spotted_spider_mite':
-        st.info('Aiming a hard stream of water at infested plants to knock spider mites off the plants. Other options include insecticidal soaps, horticultural oils, or neem oil.')
+        st.info('aiming a hard stream of water at infested plants to knock spider mites off the plants. Other options include insecticidal soaps, horticultural oils, or neem oil.')
     elif predicted_class == 'Tomato__Target_Spot':
         st.info('Products containing chlorothalonil, mancozeb, and copper oxychloride have been shown to provide good control of target spot in research trials.')
     elif predicted_class == 'Tomato__Tomato_YellowLeaf__Curl_Virus':
@@ -60,10 +60,11 @@ if uploaded_file is not None:
     elif predicted_class == 'Tomato__Tomato_mosaic_virus':
         st.info('Remove all infected plants and destroy them. Do NOT put them in the compost pile, as the virus may persist in infected plant matter. Monitor the rest of your plants closely, especially those that were located near infected plants. Disinfect gardening tools after every use.')
     elif predicted_class == 'Tomato_healthy':
-        st.info('Your plant is healthy, there is no need to apply medicines, please take care of your plants, if any disease occurs, then cure it fast and remove the infected leaves.')
-        
-    # Convert image to numpy array
-    img_array = np.array(image)
+        st.info('Your plant is healthy, there is no need to apply medicines, please take care of your plants, if any disease occurs, than cure it fast and remove the infected leaves.')
+    
+    # Plot in 3D RGB space
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
     
     # Create a grid of x, y, z coordinates
     x, y = np.meshgrid(np.arange(img_array.shape[1]), np.arange(img_array.shape[0]))
@@ -72,11 +73,9 @@ if uploaded_file is not None:
     b = img_array[:, :, 2]
     
     # Plot the surface for red channel
-    fig = plt.figure(figsize=(5.12, 5.12))
-    ax = fig.add_subplot(111, projection='3d')
     ax.plot_surface(x, y, r, cmap='Reds', linewidth=0)
     ax.set_xlabel('X')
     ax.set_ylabel('Y')
     ax.set_zlabel('Red')
-    
+
     st.pyplot(fig)

@@ -3,8 +3,6 @@ from PIL import Image
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
-import colorsys
-from keras.models import load_model
 
 st.set_page_config(page_title='Machine Learning App with Random Forest')
 
@@ -68,9 +66,9 @@ if uploaded_file is not None:
     st.text('Medicine for a quick treatment')
     display_medicine(predicted_class)
     
-    # Plotting 3D scatter plot for RGB colors
-    fig_rgb = plt.figure()
-    ax_rgb = fig_rgb.add_subplot(111, projection='3d')
+    # Plotting 3D scatter plot
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
     
     # Create a grid of x, y, z coordinates
     x, y = np.meshgrid(np.arange(img_array.shape[1]), np.arange(img_array.shape[0]))
@@ -80,30 +78,14 @@ if uploaded_file is not None:
     g = img_array[:, :, 1].flatten()
     b = img_array[:, :, 2].flatten()
     
-    # Plot the surface for red channel
-    ax_rgb.scatter(r, g, b, c='r', marker='o')
-    ax_rgb.set_xlabel('Red')
-    ax_rgb.set_ylabel('Green')
-    ax_rgb.set_zlabel('Blue')
+    # Plot the surface
+    ax.scatter(x.flatten(), y.flatten(), r, c='r', marker='o', label='Red')
+    ax.scatter(x.flatten(), y.flatten(), g, c='g', marker='o', label='Green')
+    ax.scatter(x.flatten(), y.flatten(), b, c='b', marker='o', label='Blue')
     
-    st.pyplot(fig_rgb)
+    ax.set_xlabel('X')
+    ax.set_ylabel('Y')
+    ax.set_zlabel('Intensity')
+    ax.legend()
     
-    # Plotting 3D scatter plot for HSV colors
-    fig_hsv = plt.figure()
-    ax_hsv = fig_hsv.add_subplot(111, projection='3d')
-    
-    # Convert RGB image to HSV
-    hsv_image = np.apply_along_axis(colorsys.rgb_to_hsv, -1, img_array / 255.0)
-    
-    # Flatten HSV channels
-    h = hsv_image[:, :, 0].flatten()
-    s = hsv_image[:, :, 1].flatten()
-    v = hsv_image[:, :, 2].flatten()
-    
-    # Plot the surface for hue channel
-    ax_hsv.scatter(h, s, v, c='b', marker='o')
-    ax_hsv.set_xlabel('Hue')
-    ax_hsv.set_ylabel('Saturation')
-    ax_hsv.set_zlabel('Value')
-    
-    st.pyplot(fig_hsv)
+    st.pyplot(fig)

@@ -60,7 +60,7 @@ def generate_heatmap(image, disease_mask):
     plt.imshow(overlaid_image)
     plt.imshow(disease_heatmap, alpha=0.5)
     plt.axis('off')
-    st.pyplot()
+    return plt.gcf()
 
 # Function to predict disease and generate heatmap
 def predict_disease_and_generate_heatmap(image):
@@ -90,7 +90,8 @@ def predict_disease_and_generate_heatmap(image):
 
     # Generate heatmap
     disease_mask = np.random.rand(img_array.shape[0], img_array.shape[1])  # Example random mask, replace with actual mask
-    generate_heatmap(img_array, disease_mask)
+    fig = generate_heatmap(img_array, disease_mask)
+    st.pyplot(fig)
 
 # Main code
 uploaded_file = st.file_uploader("Choose an image ...", type="jpg")

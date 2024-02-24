@@ -29,10 +29,9 @@ if uploaded_file is not None:
     image = Image.open(uploaded_file)
     st.image(image, caption='Tomato Leaf Image')
     image = image.resize((256,256))
-    img_array = np.array(image)
+    img_batch = np.expand_dims(image, 0)
     
     # Get predictions
-    img_batch = np.expand_dims(image, 0)
     predictions = MODEL.predict(img_batch)
     predicted_class = CLASS_NAMES[np.argmax(predictions[0])]
     confidence = np.max(predictions[0])
@@ -42,36 +41,33 @@ if uploaded_file is not None:
     st.info(confidence)
     
     st.text('Medicine for a quick treatment')
-    # Add medicine suggestions based on predicted_class
+    if predicted_class == 'Tomato_Bacterial_spot':
+        st.info('A plant with bacterial spot cannot be cured. Remove symptomatic plants from the field or greenhouse to prevent the spread of bacteria to healthy plants. Burn, bury or hot compost the affected plants and DO NOT eat symptomatic fruit.')
+    elif predicted_class == 'Tomato_Early_blight':
+        st.info('Cure the plant quickly otherwise the diease can be spread, Thoroughly spray the plant (bottoms of leaves also) with Bonide Liquid Copper Fungicide concentrate or Bonide Tomato & Vegetable')
+    # Add other conditions for disease and medicine
     
+    # Convert image to numpy array
+    img_array = np.array(image)
+    
+    # Function to convert RGB image to HSV
+    def rgb_to_hsv(rgb):
+        return colorsys.rgb_to_hsv(rgb[0]/255, rgb[1]/255, rgb[2]/255)
+
     # Convert RGB image to HSV
-# Convert RGB image to HSV
-    hsv_image = np.apply_along_axis(colorsys.rgb_to_hsv, -1, img_array / 255)
-    h, s, v = hsv_image[:, :, 0], hsv_image[:, :, 1], hsv_image[:, :, 2]
+    hsv_image = np.apply_along_axis(rgb_to_hsv, -1, img_array)
     
-    # Plot in 3D HSV space (Hue)
-    fig_hue = plt.figure()
-    ax_hue = fig_hue.add_subplot(111, projection='3d')
-    ax_hue.scatter(np.arange(h.shape[1]), np.arange(h.shape[0]), h.flatten(), c='r', marker='o')
-    ax_hue.set_xlabel('X')
-    ax_hue.set_ylabel('Y')
-    ax_hue.set_zlabel('Hue')
-    st.pyplot(fig_hue)
+    # Extract HSV components
+    h = hsv_image[:, :, 0]
+    s = hsv_image[:, :, 1]
+    v = hsv_image[:, :, 2]
     
-    # Plot in 3D HSV space (Saturation)
-    fig_sat = plt.figure()
-    ax_sat = fig_sat.add_subplot(111, projection='3d')
-    ax_sat.scatter(np.arange(s.shape[1]), np.arange(s.shape[0]), s.flatten(), c='g', marker='o')
-    ax_sat.set_xlabel('X')
-    ax_sat.set_ylabel('Y')
-    ax_sat.set_zlabel('Saturation')
-    st.pyplot(fig_sat)
-    
-    # Plot in 3D HSV space (Value)
-    fig_val = plt.figure()
-    ax_val = fig_val.add_subplot(111, projection='3d')
-    ax_val.scatter(np.arange(v.shape[1]), np.arange(v.shape[0]), v.flatten(), c='b', marker='o')
-    ax_val.set_xlabel('X')
-    ax_val.set_ylabel('Y')
-    ax_val.set_zlabel('Value')
-    st.pyplot(fig_val)
+    # Plot in 3D HSV space
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    ax.scatter(h.flatten(), s.flatten(), v.flatten(), c='r', marker='o')
+    ax.set_xlabel('Hue')
+    ax.set_ylabel('Saturation')
+    ax.set_zlabel('Value')
+    st.pyplot(fig)
+

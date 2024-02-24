@@ -45,7 +45,8 @@ if uploaded_file is not None:
     # Add medicine suggestions based on predicted_class
     
     # Convert RGB image to HSV
-    hsv_image = colorsys.rgb_to_hsv(img_array[:, :, 0]/255, img_array[:, :, 1]/255, img_array[:, :, 2]/255)
+# Convert RGB image to HSV
+    hsv_image = np.apply_along_axis(colorsys.rgb_to_hsv, -1, img_array / 255)
     h, s, v = hsv_image[:, :, 0], hsv_image[:, :, 1], hsv_image[:, :, 2]
     
     # Plot in 3D HSV space (Hue)

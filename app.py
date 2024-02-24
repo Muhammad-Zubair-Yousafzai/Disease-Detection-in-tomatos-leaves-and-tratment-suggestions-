@@ -67,29 +67,16 @@ if uploaded_file is not None:
     
     # Create a grid of x, y, z coordinates
     x, y = np.meshgrid(np.arange(img_array.shape[1]), np.arange(img_array.shape[0]))
+    r = img_array[:, :, 0]
+    g = img_array[:, :, 1]
+    b = img_array[:, :, 2]
     
-    # Define functions for color conversion
-    def rgb_to_cmyk(rgb):
-        cmyk = colorsys.rgb_to_yiq(rgb[0]/255, rgb[1]/255, rgb[2]/255)
-        k = 1 - max(rgb[0]/255, rgb[1]/255, rgb[2]/255)
-        if k == 1:
-            return 0, 0, 0, 1
-        c = (1 - rgb[0]/255 - k) / (1 - k)
-        m = (1 - rgb[1]/255 - k) / (1 - k)
-        y = (1 - rgb[2]/255 - k) / (1 - k)
-        return c, m, y, k
-    
-    # Convert RGB to CMYK for each pixel
-    cmyk_array = np.apply_along_axis(rgb_to_cmyk, -1, img_array)
-    
-    # Resize the plot image
+    # Plot the surface for red channel
     fig = plt.figure(figsize=(5.12, 5.12))
-    
-    # Plot the surface for the cyan channel
     ax = fig.add_subplot(111, projection='3d')
-    ax.plot_surface(x, y, cmyk_array[:, :, 0], cmap='Blues', linewidth=0)
+    ax.plot_surface(x, y, r, cmap='Reds', linewidth=0)
     ax.set_xlabel('X')
     ax.set_ylabel('Y')
-    ax.set_zlabel('Cyan')
-
+    ax.set_zlabel('Red')
+    
     st.pyplot(fig)

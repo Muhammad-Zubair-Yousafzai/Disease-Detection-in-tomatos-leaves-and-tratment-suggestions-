@@ -46,11 +46,8 @@ def display_medicine(predicted_class):
     elif predicted_class == 'Tomato_healthy':
         st.info('Your plant is healthy, there is no need to apply medicines, please take care of your plants, if any disease occurs, then cure it fast and remove the infected leaves.')
 
-# Function to generate heatmap with custom size
-def generate_heatmap(image, disease_mask, figsize=(8, 8)):
-    # Set the size of the figure
-    plt.figure(figsize=(256,256))
-    
+# Function to generate heatmap
+def generate_heatmap(image, disease_mask):
     # Apply colormap to disease mask
     cmap = LinearSegmentedColormap.from_list('custom', [(0, 'green'), (1, 'red')])
     disease_heatmap = cmap(disease_mask)

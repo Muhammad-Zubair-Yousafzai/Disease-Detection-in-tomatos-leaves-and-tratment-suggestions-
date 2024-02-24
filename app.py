@@ -31,23 +31,47 @@ if uploaded_file is not None:
     img_array = np.array(image)
 
 
-       # Plot in 3D RGB space
+
+    # Convert RGB to HSV
+    def rgb_to_hsv(rgb):
+        return colorsys.rgb_to_hsv(rgb[0]/255, rgb[1]/255, rgb[2]/255)
+    
+    # Convert RGB to CMYK
+    def rgb_to_cmyk(rgb):
+        cmyk = colorsys.rgb_to_hsv(rgb[0]/255, rgb[1]/255, rgb[2]/255)
+        c = 1 - cmyk[0]
+        m = 1 - cmyk[1]
+        y = 1 - cmyk[2]
+        k = min(c, m, y)
+        if k == 1:
+            return 0, 0, 0, 1
+        return (c - k) / (1 - k), (m - k) / (1 - k), (y - k) / (1 - k), k
+    
+    # Convert image to numpy array
+    img_array = np.array(image)
+    
+    # Create a grid of x, y, z coordinates
+    x, y = np.meshgrid(np.arange(img_array.shape[1]), np.arange(img_array.shape[0]))
+    c = np.zeros_like(img_array[:, :, 0])
+    m = np.zeros_like(img_array[:, :, 0])
+    y = np.zeros_like(img_array[:, :, 0])
+    k = np.zeros_like(img_array[:, :, 0])
+    
+    # Convert RGB to CMYK for each pixel
+    for i in range(img_array.shape[0]):
+        for j in range(img_array.shape[1]):
+            c[i, j], m[i, j], y[i, j], k[i, j] = rgb_to_cmyk(img_array[i, j, :])
+    
+    # Plot the surface for cyan channel
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
-    
-     # Create a grid of x, y, z coordinates
-    x, y = np.meshgrid(np.arange(img_array.shape[1]), np.arange(img_array.shape[0]))
-    r = img_array[:, :, 0]
-    g = img_array[:, :, 1]
-    b = img_array[:, :, 2]
-    
-    # Plot the surface for red channel
-    ax.plot_surface(x, y, r, cmap='Reds', linewidth=0)
+    ax.plot_surface(x, y, c, cmap='Blues', linewidth=0)
     ax.set_xlabel('X')
     ax.set_ylabel('Y')
-    ax.set_zlabel('Red')
-
+    ax.set_zlabel('Cyan')
+    
     st.pyplot(fig)
+
 
     # Get predictions
     img_batch = np.expand_dims(image, 0)

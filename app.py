@@ -82,8 +82,10 @@ if uploaded_file is not None:
     # Convert RGB to CMYK for each pixel
     cmyk_array = np.apply_along_axis(rgb_to_cmyk, -1, img_array)
     
+    # Resize the plot image
+    fig = plt.figure(figsize=(5.12, 5.12))
+    
     # Plot the surface for the cyan channel
-    fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
     ax.plot_surface(x, y, cmyk_array[:, :, 0], cmap='Blues', linewidth=0)
     ax.set_xlabel('X')

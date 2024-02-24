@@ -1,15 +1,16 @@
 import streamlit as st
 from PIL import Image
 import numpy as np
-import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
+import matplotlib.pyplot as plt
+import colorsys
+from keras.models import load_model
 
 st.set_page_config(page_title='Machine Learning App with Random Forest')
 
 st.title("Disease Detection in Tomato leaves")
 st.text("Upload an image of tomato leaf")
 
-# Load the pre-trained model and define class names
 MODEL = load_model("Tomato.h5")
 CLASS_NAMES = ['Tomato_Bacterial_spot',
  'Tomato_Early_blight',
@@ -22,8 +23,24 @@ CLASS_NAMES = ['Tomato_Bacterial_spot',
  'Tomato__Tomato_mosaic_virus',
  'Tomato_healthy']
 
-# Function to display medicine recommendations
-def display_medicine(predicted_class):
+uploaded_file = st.file_uploader("Choose an image ...", type="jpg")
+
+if uploaded_file is not None:
+    image = Image.open(uploaded_file)
+    st.image(image, caption='Tomato Leaf Image')
+    image = image.resize((256,256))
+    img_batch = np.expand_dims(image, 0)
+    
+    # Get predictions
+    predictions = MODEL.predict(img_batch)
+    predicted_class = CLASS_NAMES[np.argmax(predictions[0])]
+    confidence = np.max(predictions[0])
+    st.text('Prediction')
+    st.info(predicted_class)
+    st.text('Confidence')
+    st.info(confidence)
+    
+    st.text('Medicine for a quick treatment')
     if predicted_class == 'Tomato_Bacterial_spot':
         st.info('A plant with bacterial spot cannot be cured. Remove symptomatic plants from the field or greenhouse to prevent the spread of bacteria to healthy plants. Burn, bury or hot compost the affected plants and DO NOT eat symptomatic fruit.')
     elif predicted_class == 'Tomato_Early_blight':
@@ -44,48 +61,22 @@ def display_medicine(predicted_class):
         st.info('Remove all infected plants and destroy them. Do NOT put them in the compost pile, as the virus may persist in infected plant matter. Monitor the rest of your plants closely, especially those that were located near infected plants. Disinfect gardening tools after every use.')
     elif predicted_class == 'Tomato_healthy':
         st.info('Your plant is healthy, there is no need to apply medicines, please take care of your plants, if any disease occurs, then cure it fast and remove the infected leaves.')
-
-# Main functionality
-uploaded_file = st.file_uploader("Choose an image ...", type="jpg")
-
-if uploaded_file is not None:
-    image = Image.open(uploaded_file)
-    st.image(image, caption='Tomato Leaf Image')
-    image = image.resize((256,256))
+        
+    # Convert image to numpy array
     img_array = np.array(image)
-    
-    # Get predictions
-    predictions = MODEL.predict(np.expand_dims(img_array, 0))
-    predicted_class = CLASS_NAMES[np.argmax(predictions[0])]
-    confidence = np.max(predictions[0])
-    st.text('Prediction')
-    st.info(predicted_class)
-    st.text('Confidence')
-    st.info(confidence)
-    
-    st.text('Medicine for a quick treatment')
-    display_medicine(predicted_class)
-    
-    # Plotting 3D scatter plot
-    fig = plt.figure()
-    ax = fig.add_subplot(111, projection='3d')
     
     # Create a grid of x, y, z coordinates
     x, y = np.meshgrid(np.arange(img_array.shape[1]), np.arange(img_array.shape[0]))
+    r = img_array[:, :, 0]
+    g = img_array[:, :, 1]
+    b = img_array[:, :, 2]
     
-    # Flatten image channels
-    r = img_array[:, :, 0].flatten()
-    g = img_array[:, :, 1].flatten()
-    b = img_array[:, :, 2].flatten()
-    
-    # Plot the surface
-    ax.scatter(x.flatten(), y.flatten(), r, c='r', marker='o', label='Red')
-    ax.scatter(x.flatten(), y.flatten(), g, c='g', marker='o', label='Green')
-    ax.scatter(x.flatten(), y.flatten(), b, c='b', marker='o', label='Blue')
-    
+    # Plot the surface for red channel
+    fig = plt.figure(figsize=(5.12, 5.12))
+    ax = fig.add_subplot(111, projection='3d')
+    ax.plot_surface(x, y, r, cmap='Reds', linewidth=0)
     ax.set_xlabel('X')
     ax.set_ylabel('Y')
-    ax.set_zlabel('Intensity')
-    ax.legend()
+    ax.set_zlabel('Red')
     
     st.pyplot(fig)

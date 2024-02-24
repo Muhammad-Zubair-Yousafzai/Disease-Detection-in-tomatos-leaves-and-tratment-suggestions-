@@ -29,7 +29,25 @@ if uploaded_file is not None:
     st.image(image, caption='Tomato Leaf Image')
     image = image.resize((256, 256))
     img_array = np.array(image)
+
+
+       # Plot in 3D RGB space
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
     
+    # Create a grid of x, y, z coordinates
+    x, y = np.meshgrid(np.arange(img_array.shape[1]), np.arange(img_array.shape[0]))
+    r = img_array[:, :, 0]
+    g = img_array[:, :, 1]
+    b = img_array[:, :, 2]
+    
+    # Plot the surface for red channel
+    ax.plot_surface(x, y, r, cmap='Reds', linewidth=0)
+    ax.set_xlabel('X')
+    ax.set_ylabel('Y')
+    ax.set_zlabel('Red')
+
+    st.pyplot(fig)
     # Get predictions
     img_batch = np.expand_dims(image, 0)
     predictions = MODEL.predict(img_batch)
@@ -62,20 +80,4 @@ if uploaded_file is not None:
     elif predicted_class == 'Tomato_healthy':
         st.info('Your plant is healthy, there is no need to apply medicines, please take care of your plants, if any disease occurs, than cure it fast and remove the infected leaves.')
     
-    # Plot in 3D RGB space
-    fig = plt.figure()
-    ax = fig.add_subplot(111, projection='3d')
-    
-    # Create a grid of x, y, z coordinates
-    x, y = np.meshgrid(np.arange(img_array.shape[1]), np.arange(img_array.shape[0]))
-    r = img_array[:, :, 0]
-    g = img_array[:, :, 1]
-    b = img_array[:, :, 2]
-    
-    # Plot the surface for red channel
-    ax.plot_surface(x, y, r, cmap='Reds', linewidth=0)
-    ax.set_xlabel('X')
-    ax.set_ylabel('Y')
-    ax.set_zlabel('Red')
-
-    st.pyplot(fig)
+ 

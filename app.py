@@ -66,7 +66,7 @@ if uploaded_file is not None:
     
     # Plot in 3D RGB space
     fig = plt.figure()
-    ax = fig.add_subplot(50, projection='3d')
+    ax = fig.add_subplot(111, projection='3d')
     ax.scatter(img_array[:, :, 0].flatten(), img_array[:, :, 1].flatten(), img_array[:, :, 2].flatten(), c='r', marker='o')
     ax.set_xlabel('Red')
     ax.set_ylabel('Green')

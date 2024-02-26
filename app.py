@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from matplotlib.colors import LinearSegmentedColormap
 from keras.models import load_model
 
-st.set_page_config(page_title='Machine Learning App with Random Forest')
+st.set_page_config(page_title='Disease Detection')
 
 st.title("Disease Detection in Tomato leaves")
 st.text("Upload an image of tomato leaf")
@@ -47,33 +47,6 @@ def display_medicine(predicted_class):
         st.info('Remove all infected plants and destroy them. Do NOT put them in the compost pile, as the virus may persist in infected plant matter. Monitor the rest of your plants closely, especially those that were located near infected plants. Disinfect gardening tools after every use.')
     elif predicted_class == 'Tomato_healthy':
         st.info('Your plant is healthy, there is no need to apply medicines, please take care of your plants, if any disease occurs, then cure it fast and remove the infected leaves.')
-
-
-
-# Function to generate accuracy plot based on predictions
-def generate_accuracy_plot(predictions, ground_truth):
-    # Assuming predictions and ground_truth are arrays/lists of binary values (0 or 1)
-    accuracy = np.mean(predictions == ground_truth)
-    
-    plt.figure(figsize=(8, 6))
-    plt.bar(['Accuracy'], [accuracy], color='blue')
-    plt.title('Accuracy Based on Predictions')
-    plt.ylabel('Accuracy')
-    plt.ylim(0, 1)  # Set y-axis limits between 0 and 1
-    plt.grid(axis='y', linestyle='--', alpha=0.7)
-    return plt.gcf()
-
-# Sample predictions and ground truth labels (replace with actual data)
-predictions = np.random.randint(2, size=100)  # Generate random binary predictions
-ground_truth = np.random.randint(2, size=100)  # Generate random binary ground truth labels
-
-# Generate accuracy plot
-fig = generate_accuracy_plot(predictions, ground_truth)
-
-# Display accuracy plot
-st.pyplot(fig)
-
-
 
 
 # Function to generate heatmap

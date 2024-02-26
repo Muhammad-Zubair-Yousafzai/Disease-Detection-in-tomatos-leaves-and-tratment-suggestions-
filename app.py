@@ -47,7 +47,7 @@ def display_medicine(predicted_class):
         st.info('Your plant is healthy, there is no need to apply medicines, please take care of your plants, if any disease occurs, then cure it fast and remove the infected leaves.')
 
 # Function to generate heatmap
-def generate_heatmap(image, disease_mask, width=8, height=6):
+def generate_heatmap(image, disease_mask, width=4, height=4):
     # Apply colormap to disease mask
     cmap = LinearSegmentedColormap.from_list('custom', [(0, 'green'), (1, 'red')])
     disease_heatmap = cmap(disease_mask)

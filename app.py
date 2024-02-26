@@ -25,22 +25,25 @@ CLASS_NAMES = ['Tomato_Bacterial_spot',
 
 
 
-# Function to generate accuracy plot
-def generate_accuracy_plot(epochs, accuracy):
+# Function to generate accuracy plot based on predictions
+def generate_accuracy_plot(predictions, ground_truth):
+    # Assuming predictions and ground_truth are arrays/lists of binary values (0 or 1)
+    accuracy = np.mean(predictions == ground_truth)
+    
     plt.figure(figsize=(8, 6))
-    plt.plot(epochs, accuracy, label='Accuracy')
-    plt.title('Accuracy Over Epochs')
-    plt.xlabel('Epochs')
+    plt.bar(['Accuracy'], [accuracy], color='blue')
+    plt.title('Accuracy Based on Predictions')
     plt.ylabel('Accuracy')
-    plt.legend()
+    plt.ylim(0, 1)  # Set y-axis limits between 0 and 1
+    plt.grid(axis='y', linestyle='--', alpha=0.7)
     return plt.gcf()
 
-# Sample data (replace with actual data)
-epochs = np.arange(1, 11)
-accuracy = np.random.rand(10)
+# Sample predictions and ground truth labels (replace with actual data)
+predictions = np.random.randint(2, size=100)  # Generate random binary predictions
+ground_truth = np.random.randint(2, size=100)  # Generate random binary ground truth labels
 
 # Generate accuracy plot
-fig = generate_accuracy_plot(epochs, accuracy)
+fig = generate_accuracy_plot(predictions, ground_truth)
 
 # Display accuracy plot
 st.pyplot(fig)

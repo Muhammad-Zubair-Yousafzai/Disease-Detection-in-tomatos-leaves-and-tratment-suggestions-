@@ -47,7 +47,7 @@ def display_medicine(predicted_class):
         st.info('Your plant is healthy, there is no need to apply medicines, please take care of your plants, if any disease occurs, then cure it fast and remove the infected leaves.')
 
 # Function to generate heatmap
-def generate_heatmap(image, disease_mask, width=4, height=4):
+def generate_heatmap(image, disease_mask, width=8, height=6):
     # Apply colormap to disease mask
     cmap = LinearSegmentedColormap.from_list('custom', [(0, 'green'), (1, 'red')])
     disease_heatmap = cmap(disease_mask)
@@ -63,6 +63,16 @@ def generate_heatmap(image, disease_mask, width=4, height=4):
     plt.imshow(overlaid_image)
     plt.imshow(disease_heatmap, alpha=0.5)
     plt.axis('off')
+    return plt.gcf()
+
+# Function to generate accuracy plot
+def generate_accuracy_plot(epochs, accuracy):
+    plt.figure(figsize=(8, 6))
+    plt.plot(epochs, accuracy, label='Accuracy')
+    plt.title('Accuracy Over Epochs')
+    plt.xlabel('Epochs')
+    plt.ylabel('Accuracy')
+    plt.legend()
     return plt.gcf()
 
 # Function to predict disease and generate heatmap
@@ -93,9 +103,15 @@ def predict_disease_and_generate_heatmap(image):
 
     # Generate heatmap
     disease_mask = np.random.rand(img_array.shape[0], img_array.shape[1])  # Example random mask, replace with actual mask
-    fig = generate_heatmap(img_array, disease_mask)
-    st.pyplot(fig)
+    fig1 = generate_heatmap(img_array, disease_mask)
+    
+    # Generate accuracy plot (example data, replace with actual data)
+    epochs = np.arange(1, 11)
+    accuracy = np.random.rand(10)
+    fig2 = generate_accuracy_plot(epochs, accuracy)
 
+    # Display plots side by side
+    st.pyplot(fig1, fig2)
 
 
 # Main code

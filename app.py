@@ -128,7 +128,7 @@ def generate_confidence_histogram(confidence_scores):
     return plt.gcf()
 
 # Sample confidence scores (replace with actual data)
-confidence_scores = (confidence)  # Generate random confidence scores between 0 and 1
+#confidence_scores = (confidence)  # Generate random confidence scores between 0 and 1
 
 # Generate confidence histogram
 fig = generate_confidence_histogram(confidence_scores)

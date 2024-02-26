@@ -95,42 +95,6 @@ def predict_disease_and_generate_heatmap(image):
 
 
 
-    # Function to predict disease and generate heatmap
-def predict_disease_and_generate_heatmap(image):
-    # Display uploaded image
-    st.image(image, caption='Tomato Leaf Image')
-
-    # Resize image
-    image_resized = image.resize((256, 256))
-
-    # Convert image to numpy array
-    img_array = np.array(image_resized)
-
-    # Get predictions
-    predictions = MODEL.predict(np.expand_dims(img_array, 0))
-    predicted_class = CLASS_NAMES[np.argmax(predictions[0])]
-    confidence = np.max(predictions[0])
-
-    # Display prediction and confidence
-    st.text('Prediction:')
-    st.info(predicted_class)
-    st.text('Confidence:')
-    st.info(confidence)
-
-    # Display medicine recommendation
-    st.text('Medicine for quick treatment:')
-    display_medicine(predicted_class)
-
-    # Generate heatmap
-    disease_mask = np.random.rand(img_array.shape[0], img_array.shape[1])  # Example random mask, replace with actual mask
-    fig = generate_heatmap(img_array, disease_mask, width=8, height=6)  # Adjust width and height as needed
-    st.pyplot(fig)
-
-
-
-
-
-
 # Main code
 uploaded_file = st.file_uploader("Choose an image ...", type="jpg")
 

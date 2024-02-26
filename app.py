@@ -93,26 +93,6 @@ def predict_disease_and_generate_heatmap(image):
     fig = generate_heatmap(img_array, disease_mask)
     st.pyplot(fig)
 
-
-    # Function to generate heatmap
-def generate_heatmap(image, disease_mask, width, height):
-    # Apply colormap to disease mask
-    cmap = LinearSegmentedColormap.from_list('custom', [(0, 'green'), (1, 'red')])
-    disease_heatmap = cmap(disease_mask)
-    
-    # Overlay heatmap on image
-    overlaid_image = Image.fromarray((image * 255).astype(np.uint8))
-    overlaid_image.putalpha(128)  # Set opacity to 50%
-    overlaid_image = overlaid_image.convert("RGB")
-    
-    # Set figure size
-    plt.figure(figsize=(width, height))
-    
-    plt.imshow(overlaid_image)
-    plt.imshow(disease_heatmap, alpha=0.5)
-    plt.axis('off')
-    return plt.gcf()
-
 # Main code
 uploaded_file = st.file_uploader("Choose an image ...", type="jpg")
 

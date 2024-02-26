@@ -108,15 +108,6 @@ def predict_disease_and_generate_heatmap(image):
     disease_mask = np.random.rand(img_array.shape[0], img_array.shape[1])  # Example random mask, replace with actual mask
     fig1 = generate_heatmap(img_array, disease_mask)
     
-    # Generate accuracy plot (example data, replace with actual data)
-    epochs = np.arange(1, 11)
-    accuracy = np.random.rand(10)
-    fig2 = generate_accuracy_plot(epochs, accuracy)
-
-    # Display plots side by side
-    st.pyplot(fig1, fig2)
-
-
 # Function to generate confidence histogram
 def generate_confidence_histogram(confidence_scores):
     plt.figure(figsize=(8, 6))
@@ -126,16 +117,11 @@ def generate_confidence_histogram(confidence_scores):
     plt.ylabel('Frequency')
     plt.grid(axis='y', linestyle='--', alpha=0.7)
     return plt.gcf()
-
-# Sample confidence scores (replace with actual data)
-#confidence_scores = (confidence)  # Generate random confidence scores between 0 and 1
-
 # Generate confidence histogram
 fig = generate_confidence_histogram(confidence_scores)
 
 # Display confidence histogram
 st.pyplot(fig)
-
 
 
 # Main code

@@ -47,7 +47,7 @@ def display_medicine(predicted_class):
         st.info('Your plant is healthy, there is no need to apply medicines, please take care of your plants, if any disease occurs, then cure it fast and remove the infected leaves.')
 
 # Function to generate heatmap
-def generate_heatmap(image, disease_mask):
+def generate_heatmap(image, disease_mask, width=8, height=6):
     # Apply colormap to disease mask
     cmap = LinearSegmentedColormap.from_list('custom', [(0, 'green'), (1, 'red')])
     disease_heatmap = cmap(disease_mask)
@@ -56,6 +56,9 @@ def generate_heatmap(image, disease_mask):
     overlaid_image = Image.fromarray((image * 255).astype(np.uint8))
     overlaid_image.putalpha(100)  # Set opacity to 50%
     overlaid_image = overlaid_image.convert("RGB")
+    
+    # Set figure size
+    plt.figure(figsize=(width, height))
     
     plt.imshow(overlaid_image)
     plt.imshow(disease_heatmap, alpha=0.5)
@@ -90,7 +93,7 @@ def predict_disease_and_generate_heatmap(image):
 
     # Generate heatmap
     disease_mask = np.random.rand(img_array.shape[0], img_array.shape[1])  # Example random mask, replace with actual mask
-    fig = generate_heatmap(img_array, disease_mask, width=8, height=6)
+    fig = generate_heatmap(img_array, disease_mask)
     st.pyplot(fig)
 
 

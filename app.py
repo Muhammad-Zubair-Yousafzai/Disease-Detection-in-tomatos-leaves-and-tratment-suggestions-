@@ -57,7 +57,7 @@ def generate_heatmap(image, disease_mask, width=8, height=6):
     
     # Overlay heatmap on image
     overlaid_image = Image.fromarray((image * 255).astype(np.uint8))
-    overlaid_image.putalpha(200)  # Set opacity to 50%
+    overlaid_image.putalpha(0)  # Set opacity to 50%
     overlaid_image = overlaid_image.convert("RGB")
     
     # Set figure size

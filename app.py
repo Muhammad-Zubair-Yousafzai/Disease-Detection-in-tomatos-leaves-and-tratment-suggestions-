@@ -86,7 +86,7 @@ def generate_heatmap(image, disease_mask):
     
     # Overlay heatmap on image
     overlaid_image = Image.fromarray((image * 255).astype(np.uint8))
-    overlaid_image.putalpha(100)  # Set opacity to 50%
+    overlaid_image.putalpha(128)  # Set opacity to 50%
     overlaid_image = overlaid_image.convert("RGB")
     
     plt.imshow(overlaid_image)
@@ -122,8 +122,9 @@ def predict_disease_and_generate_heatmap(image):
 
     # Generate heatmap
     disease_mask = np.random.rand(img_array.shape[0], img_array.shape[1])  # Example random mask, replace with actual mask
-    fig = generate_heatmap(img_array, disease_mask, width=8, height=6)
+    fig = generate_heatmap(img_array, disease_mask)
     st.pyplot(fig)
+
 # Main code
 uploaded_file = st.file_uploader("Choose an image ...", type="jpg")
 

@@ -107,22 +107,6 @@ def predict_disease_and_generate_heatmap(image):
     # Generate heatmap
     disease_mask = np.random.rand(img_array.shape[0], img_array.shape[1])  # Example random mask, replace with actual mask
     fig1 = generate_heatmap(img_array, disease_mask)
-    
-# Function to generate confidence histogram
-def generate_confidence_histogram(confidence_scores):
-    plt.figure(figsize=(8, 6))
-    plt.hist(confidence_scores, bins=10, color='green', alpha=0.7)
-    plt.title('Confidence Score Distribution')
-    plt.xlabel('Confidence Score')
-    plt.ylabel('Frequency')
-    plt.grid(axis='y', linestyle='--', alpha=0.7)
-    return plt.gcf()
-# Generate confidence histogram
-fig = generate_confidence_histogram(confidence_scores)
-
-# Display confidence histogram
-st.pyplot(fig)
-
 
 # Main code
 uploaded_file = st.file_uploader("Choose an image ...", type="jpg")

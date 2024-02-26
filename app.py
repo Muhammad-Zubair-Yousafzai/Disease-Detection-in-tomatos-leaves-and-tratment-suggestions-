@@ -117,6 +117,27 @@ def predict_disease_and_generate_heatmap(image):
     st.pyplot(fig1, fig2)
 
 
+# Function to generate confidence histogram
+def generate_confidence_histogram(confidence_scores):
+    plt.figure(figsize=(8, 6))
+    plt.hist(confidence_scores, bins=10, color='green', alpha=0.7)
+    plt.title('Confidence Score Distribution')
+    plt.xlabel('Confidence Score')
+    plt.ylabel('Frequency')
+    plt.grid(axis='y', linestyle='--', alpha=0.7)
+    return plt.gcf()
+
+# Sample confidence scores (replace with actual data)
+confidence_scores = (confidence)  # Generate random confidence scores between 0 and 1
+
+# Generate confidence histogram
+fig = generate_confidence_histogram(confidence_scores)
+
+# Display confidence histogram
+st.pyplot(fig)
+
+
+
 # Main code
 uploaded_file = st.file_uploader("Choose an image ...", type="jpg")
 

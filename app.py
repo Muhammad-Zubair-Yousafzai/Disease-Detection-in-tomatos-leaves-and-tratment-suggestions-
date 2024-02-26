@@ -23,6 +23,30 @@ CLASS_NAMES = ['Tomato_Bacterial_spot',
  'Tomato__Tomato_mosaic_virus',
  'Tomato_healthy']
 
+
+
+# Function to generate accuracy plot
+def generate_accuracy_plot(epochs, accuracy):
+    plt.figure(figsize=(8, 6))
+    plt.plot(epochs, accuracy, label='Accuracy')
+    plt.title('Accuracy Over Epochs')
+    plt.xlabel('Epochs')
+    plt.ylabel('Accuracy')
+    plt.legend()
+    return plt.gcf()
+
+# Sample data (replace with actual data)
+epochs = np.arange(1, 11)
+accuracy = np.random.rand(10)
+
+# Generate accuracy plot
+fig = generate_accuracy_plot(epochs, accuracy)
+
+# Display accuracy plot
+st.pyplot(fig)
+
+
+
 # Function to display medicine recommendations
 def display_medicine(predicted_class):
     if predicted_class == 'Tomato_Bacterial_spot':

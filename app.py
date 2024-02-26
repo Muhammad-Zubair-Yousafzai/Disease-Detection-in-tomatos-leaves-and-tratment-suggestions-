@@ -68,7 +68,7 @@ def predict_disease_and_generate_heatmap(image):
     st.image(image, caption='Tomato Leaf Image')
 
     # Resize image
-    image_resized = image.resize((60, 60))
+    image_resized = image.resize((256, 256))
 
     # Convert image to numpy array
     img_array = np.array(image_resized)
@@ -90,7 +90,7 @@ def predict_disease_and_generate_heatmap(image):
 
     # Generate heatmap
     disease_mask = np.random.rand(img_array.shape[0], img_array.shape[1])  # Example random mask, replace with actual mask
-    fig = generate_heatmap(img_array, disease_mask)
+    fig = generate_heatmap(img_array, disease_mask, width=8, height=6)
     st.pyplot(fig)
 
 

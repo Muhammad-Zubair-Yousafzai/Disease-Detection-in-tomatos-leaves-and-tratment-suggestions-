@@ -68,7 +68,7 @@ def predict_disease_and_generate_heatmap(image):
     st.image(image, caption='Tomato Leaf Image')
 
     # Resize image
-    image_resized = image.resize((256, 256))
+    image_resized = image.resize((60, 60))
 
     # Convert image to numpy array
     img_array = np.array(image_resized)

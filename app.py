@@ -78,6 +78,22 @@ def generate_accuracy_plot(epochs, accuracy):
     plt.legend()
     return plt.gcf()
 
+# Function to generate heatmap
+def generate_heatmap(image, disease_mask):
+    # Apply colormap to disease mask
+    cmap = LinearSegmentedColormap.from_list('custom', [(0, 'green'), (1, 'red')])
+    disease_heatmap = cmap(disease_mask)
+    
+    # Overlay heatmap on image
+    overlaid_image = Image.fromarray((image * 255).astype(np.uint8))
+    overlaid_image.putalpha(100)  # Set opacity to 50%
+    overlaid_image = overlaid_image.convert("RGB")
+    
+    plt.imshow(overlaid_image)
+    plt.imshow(disease_heatmap, alpha=0.5)
+    plt.axis('off')
+    return plt.gcf()
+
 # Function to predict disease and generate heatmap
 def predict_disease_and_generate_heatmap(image):
     # Display uploaded image
@@ -106,8 +122,8 @@ def predict_disease_and_generate_heatmap(image):
 
     # Generate heatmap
     disease_mask = np.random.rand(img_array.shape[0], img_array.shape[1])  # Example random mask, replace with actual mask
-    fig1 = generate_heatmap(img_array, disease_mask)
-
+    fig = generate_heatmap(img_array, disease_mask, width=8, height=6)
+    st.pyplot(fig)
 # Main code
 uploaded_file = st.file_uploader("Choose an image ...", type="jpg")
 

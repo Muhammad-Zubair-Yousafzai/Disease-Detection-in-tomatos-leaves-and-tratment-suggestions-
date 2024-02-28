@@ -114,6 +114,12 @@ def predict_disease_and_generate_heatmap(image):
     fig = generate_heatmap(img_array, disease_mask)
     st.pyplot(fig)
 
+    # Show heatmap in another tab
+    st.markdown(
+        f'<a href="#" onclick="window.open(\'{fig}\', \'_blank\');return false;">View Heatmap</a>',
+        unsafe_allow_html=True
+    )
+
 
 # Main code
 uploaded_file = st.file_uploader("Choose an image ...", type=["jpg", "jpeg", "png"])

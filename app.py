@@ -79,15 +79,6 @@ def generate_heatmap(image, disease_mask):
     return plt.gcf()
 
 
-# Function to display 3D surface plot page
-def surface_plot_page(predicted_disease):
-    st.header("3D Surface Plot")
-    st.write(f"Predicted Disease: {predicted_disease}")
-    # Add your code to generate the 3D surface plot using the predicted disease
-    # This might involve processing the data or performing calculations based on the predicted disease.
-    # For demonstration purposes, let's simply display a placeholder message.
-    st.write("This page will display a 3D surface plot based on the predicted disease.")
-
 # Function to predict disease and generate heatmap
 def predict_disease_and_generate_heatmap(image):
     # Resize image
@@ -118,32 +109,20 @@ def detection_page():
 
 
 # Function to display heatmap page
-def heatmap_page(uploaded_image, predicted_class):
+def heatmap_page():
     st.header("Heatmap")
-    
-    # Display uploaded image
-    st.image(uploaded_image, caption='Tomato Leaf Image', use_column_width=True)
-    
-    # Generate disease mask based on predicted class
-    # This is a placeholder. You need to replace this with your actual disease detection logic
-    disease_mask = generate_disease_mask(uploaded_image, predicted_class)
-    
-    # Generate and display heatmap
-    heatmap_fig = generate_heatmap(np.array(uploaded_image), disease_mask)
-    st.pyplot(heatmap_fig)
+    uploaded_file = st.file_uploader("Upload an image of tomato leaf", type=["jpg", "jpeg", "png"])
+    if uploaded_file is not None:
+        image = Image.open(uploaded_file)
+        predicted_class, confidence, _ = predict_disease_and_generate_heatmap(image)
+        st.image(image, caption='Tomato Leaf Image', use_column_width=True)
+        st.write(f"Heatmap for {predicted_class}")
 
 
 # Function to display 3D surface plot page
 def surface_plot_page():
     st.header("3D Surface Plot")
-    disease = st.text_input("Enter the detected disease:", "Tomato_Bacterial_spot")
-    
-    # Button to generate surface plot
-    if st.button("Generate 3D Surface Plot"):
-        # Generate and display surface plot
-        surface_plot_fig = generate_surface_plot(disease)
-        st.pyplot(surface_plot_fig)
-
+    st.write("This page will display a 3D surface plot.")
 
 
 # Main code

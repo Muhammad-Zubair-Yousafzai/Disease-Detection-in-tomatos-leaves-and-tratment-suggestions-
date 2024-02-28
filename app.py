@@ -79,20 +79,14 @@ def generate_heatmap(image, disease_mask):
     return plt.gcf()
 
 
-# Sample function to generate disease mask based on predicted class
-def generate_disease_mask(image, predicted_class):
-    # Placeholder function. You need to replace this with your actual disease detection logic
-    # For demonstration purposes, let's assume different classes correspond to different shapes in the mask
-    mask = np.zeros((image.size[1], image.size[0]))  # Assuming image is in PIL format
-    if predicted_class == 'Tomato_Bacterial_spot':
-        # Generate mask for bacterial spot
-        pass  # Replace this with actual mask generation logic
-    elif predicted_class == 'Tomato_Early_blight':
-        # Generate mask for early blight
-        pass  # Replace this with actual mask generation logic
-    # Add more conditions for other classes
-    
-    return mask
+# Function to display 3D surface plot page
+def surface_plot_page(predicted_disease):
+    st.header("3D Surface Plot")
+    st.write(f"Predicted Disease: {predicted_disease}")
+    # Add your code to generate the 3D surface plot using the predicted disease
+    # This might involve processing the data or performing calculations based on the predicted disease.
+    # For demonstration purposes, let's simply display a placeholder message.
+    st.write("This page will display a 3D surface plot based on the predicted disease.")
 
 # Function to predict disease and generate heatmap
 def predict_disease_and_generate_heatmap(image):

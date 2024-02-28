@@ -77,28 +77,22 @@ def generate_heatmap(image, disease_mask):
     plt.imshow(disease_heatmap, alpha=0.5)
     plt.axis('off')
     return plt.gcf()
-# Function to generate 3D surface plot
-def generate_surface_plot(disease):
-    # Generate example data (replace with actual data)
-    x = np.linspace(0, 10, 100)
-    y = np.linspace(0, 10, 100)
-    X, Y = np.meshgrid(x, y)
-    Z = np.sin(X) + np.cos(Y)
+
+
+# Sample function to generate disease mask based on predicted class
+def generate_disease_mask(image, predicted_class):
+    # Placeholder function. You need to replace this with your actual disease detection logic
+    # For demonstration purposes, let's assume different classes correspond to different shapes in the mask
+    mask = np.zeros((image.size[1], image.size[0]))  # Assuming image is in PIL format
+    if predicted_class == 'Tomato_Bacterial_spot':
+        # Generate mask for bacterial spot
+        pass  # Replace this with actual mask generation logic
+    elif predicted_class == 'Tomato_Early_blight':
+        # Generate mask for early blight
+        pass  # Replace this with actual mask generation logic
+    # Add more conditions for other classes
     
-    # Create a 3D figure
-    fig = plt.figure()
-    ax = fig.add_subplot(111, projection='3d')
-
-    # Plot the surface
-    ax.plot_surface(X, Y, Z, cmap='viridis')
-
-    # Set labels and title
-    ax.set_xlabel('X Label')
-    ax.set_ylabel('Y Label')
-    ax.set_zlabel('Z Label')
-    ax.set_title(f'3D Surface Plot of {disease}')
-
-    return fig
+    return mask
 
 # Function to predict disease and generate heatmap
 def predict_disease_and_generate_heatmap(image):
@@ -130,14 +124,19 @@ def detection_page():
 
 
 # Function to display heatmap page
-def heatmap_page():
+def heatmap_page(uploaded_image, predicted_class):
     st.header("Heatmap")
-    uploaded_file = st.file_uploader("Upload an image of tomato leaf", type=["jpg", "jpeg", "png"])
-    if uploaded_file is not None:
-        image = Image.open(uploaded_file)
-        predicted_class, confidence, _ = predict_disease_and_generate_heatmap(image)
-        st.image(image, caption='Tomato Leaf Image', use_column_width=True)
-        st.write(f"Heatmap for {predicted_class}")
+    
+    # Display uploaded image
+    st.image(uploaded_image, caption='Tomato Leaf Image', use_column_width=True)
+    
+    # Generate disease mask based on predicted class
+    # This is a placeholder. You need to replace this with your actual disease detection logic
+    disease_mask = generate_disease_mask(uploaded_image, predicted_class)
+    
+    # Generate and display heatmap
+    heatmap_fig = generate_heatmap(np.array(uploaded_image), disease_mask)
+    st.pyplot(heatmap_fig)
 
 
 # Function to display 3D surface plot page

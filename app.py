@@ -32,8 +32,6 @@ h2 {
 # Inject custom CSS into Streamlit
 st.markdown(CUSTOM_CSS, unsafe_allow_html=True)
 
-st.set_page_config(page_title='Disease Detection')
-
 st.title("Disease Detection in Tomato leaves")
 st.text("Upload an image of tomato leaf")
 

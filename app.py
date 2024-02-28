@@ -32,22 +32,18 @@ h2 {
 # Inject custom CSS into Streamlit
 st.markdown(CUSTOM_CSS, unsafe_allow_html=True)
 
-st.title("Disease Detection in Tomato leaves")
-st.text("Upload an image of tomato leaf")
-
 # Load the pre-trained model and define class names
 MODEL = load_model("Tomato.h5")
 CLASS_NAMES = ['Tomato_Bacterial_spot',
- 'Tomato_Early_blight',
- 'Tomato_Late_blight',
- 'Tomato_Leaf_Mold',
- 'Tomato_Septoria_leaf_spot',
- 'Tomato_Spider_mites_Two_spotted_spider_mite',
- 'Tomato__Target_Spot',
- 'Tomato__Tomato_YellowLeaf__Curl_Virus',
- 'Tomato__Tomato_mosaic_virus',
- 'Tomato_healthy']
-
+               'Tomato_Early_blight',
+               'Tomato_Late_blight',
+               'Tomato_Leaf_Mold',
+               'Tomato_Septoria_leaf_spot',
+               'Tomato_Spider_mites_Two_spotted_spider_mite',
+               'Tomato__Target_Spot',
+               'Tomato__Tomato_YellowLeaf__Curl_Virus',
+               'Tomato__Tomato_mosaic_virus',
+               'Tomato_healthy']
 
 # Function to display medicine recommendations
 def display_medicine(predicted_class):
@@ -63,7 +59,7 @@ def display_medicine(predicted_class):
         'Tomato__Tomato_mosaic_virus': 'Remove all infected plants and destroy them. Do NOT put them in the compost pile, as the virus may persist in infected plant matter. Monitor the rest of your plants closely, especially those that were located near infected plants. Disinfect gardening tools after every use.',
         'Tomato_healthy': 'Your plant is healthy, there is no need to apply medicines, please take care of your plants, if any disease occurs, then cure it fast and remove the infected leaves.'
     }
-    st.info(recommendations.get(predicted_class, "No recommendation available for this class."))
+    return recommendations.get(predicted_class, "No recommendation available for this class.")
 
 
 # Function to generate heatmap
@@ -85,9 +81,6 @@ def generate_heatmap(image, disease_mask):
 
 # Function to predict disease and generate heatmap
 def predict_disease_and_generate_heatmap(image):
-    # Display uploaded image
-    st.image(image, caption='Tomato Leaf Image')
-
     # Resize image
     image_resized = image.resize((256, 256))
 
@@ -99,31 +92,47 @@ def predict_disease_and_generate_heatmap(image):
     predicted_class = CLASS_NAMES[np.argmax(predictions[0])]
     confidence = np.max(predictions[0])
 
-    # Display prediction and confidence
-    st.text('Prediction:')
-    st.info(predicted_class)
-    st.text('Confidence:')
-    st.info(confidence)
+    return predicted_class, confidence, display_medicine(predicted_class)
 
-    # Display medicine recommendation
-    st.text('Medicine for quick treatment:')
-    display_medicine(predicted_class)
 
-    # Generate heatmap
-    disease_mask = np.random.rand(img_array.shape[0], img_array.shape[1])  # Example random mask, replace with actual mask
-    fig = generate_heatmap(img_array, disease_mask)
-    st.pyplot(fig)
+# Function to display detection page
+def detection_page():
+    st.header("Detect")
+    uploaded_file = st.file_uploader("Upload an image of tomato leaf", type=["jpg", "jpeg", "png"])
+    if uploaded_file is not None:
+        image = Image.open(uploaded_file)
+        predicted_class, confidence, medicine = predict_disease_and_generate_heatmap(image)
+        st.write(f"Prediction: {predicted_class}")
+        st.write(f"Confidence: {confidence}")
+        st.write("Medicine for quick treatment:")
+        st.info(medicine)
 
-    # Show heatmap in another tab
-    st.markdown(
-        f'<a href="#" onclick="window.open(\'{fig}\', \'_blank\');return false;">View Heatmap</a>',
-        unsafe_allow_html=True
-    )
+
+# Function to display heatmap page
+def heatmap_page():
+    st.header("Heatmap")
+    uploaded_file = st.file_uploader("Upload an image of tomato leaf", type=["jpg", "jpeg", "png"])
+    if uploaded_file is not None:
+        image = Image.open(uploaded_file)
+        predicted_class, confidence, _ = predict_disease_and_generate_heatmap(image)
+        st.image(image, caption='Tomato Leaf Image', use_column_width=True)
+        st.write(f"Heatmap for {predicted_class}")
+
+
+# Function to display 3D surface plot page
+def surface_plot_page():
+    st.header("3D Surface Plot")
+    st.write("This page will display a 3D surface plot.")
 
 
 # Main code
-uploaded_file = st.file_uploader("Choose an image ...", type=["jpg", "jpeg", "png"])
+st.sidebar.title("Navigation")
+tabs = ["Detect", "Heatmap", "3D Surface Plot"]
+choice = st.sidebar.radio("Go to", tabs)
 
-if uploaded_file is not None:
-    image = Image.open(uploaded_file)
-    predict_disease_and_generate_heatmap(image)
+if choice == "Detect":
+    detection_page()
+elif choice == "Heatmap":
+    heatmap_page()
+elif choice == "3D Surface Plot":
+    surface_plot_page()

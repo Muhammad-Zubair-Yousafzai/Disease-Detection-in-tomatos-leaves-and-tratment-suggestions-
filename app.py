@@ -5,6 +5,33 @@ import matplotlib.pyplot as plt
 from matplotlib.colors import LinearSegmentedColormap
 from keras.models import load_model
 
+# Custom CSS styles
+CUSTOM_CSS = """
+<style>
+h1 {
+    color: #FF5733;
+    text-align: center;
+}
+h2 {
+    color: #FF5733;
+}
+.file-upload-btn {
+    background-color: #FF5733;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+}
+.file-upload-btn:hover {
+    background-color: #D35400;
+}
+</style>
+"""
+
+# Inject custom CSS into Streamlit
+st.markdown(CUSTOM_CSS, unsafe_allow_html=True)
+
 st.set_page_config(page_title='Disease Detection')
 
 st.title("Disease Detection in Tomato leaves")
@@ -91,7 +118,7 @@ def predict_disease_and_generate_heatmap(image):
 
 
 # Main code
-uploaded_file = st.file_uploader("Choose an image ...", type=["jpg", "jpeg", "png"])
+uploaded_file = st.file_uploader("Choose an image ...", type=["jpg", "jpeg", "png"], class="file-upload-btn")
 
 if uploaded_file is not None:
     image = Image.open(uploaded_file)

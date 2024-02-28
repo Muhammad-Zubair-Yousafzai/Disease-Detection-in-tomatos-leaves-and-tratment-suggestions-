@@ -118,7 +118,7 @@ def predict_disease_and_generate_heatmap(image):
 
 
 # Main code
-uploaded_file = st.file_uploader("Choose an image ...", type=["jpg", "jpeg", "png"], class="file-upload-btn")
+uploaded_file = st.file_uploader("Choose an image ...", type=["jpg", "jpeg", "png"])
 
 if uploaded_file is not None:
     image = Image.open(uploaded_file)

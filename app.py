@@ -69,12 +69,14 @@ def generate_heatmap(image, disease_mask):
     disease_heatmap = cmap(disease_mask)
 
     # Overlay heatmap on image
-    fig, ax = plt.subplots()
-    ax.imshow(image)
-    ax.imshow(disease_heatmap, alpha=0.5)
-    ax.axis('off')
-    return fig
+    overlaid_image = Image.fromarray((image * 255).astype(np.uint8))
+    overlaid_image.putalpha(128)  # Set opacity to 50%
+    overlaid_image = overlaid_image.convert("RGB")
 
+    plt.imshow(overlaid_image)
+    plt.imshow(disease_heatmap, alpha=0.5)
+    plt.axis('off')
+    return plt.gcf()
 
 
 # Function to predict disease and generate heatmap
@@ -93,21 +95,17 @@ def predict_disease_and_generate_heatmap(image):
     return predicted_class, confidence, display_medicine(predicted_class)
 
 
-# Function to display heatmap page
-def heatmap_page():
-    st.header("Heatmap")
+# Function to display detection page
+def detection_page():
+    st.header("Detect")
     uploaded_file = st.file_uploader("Upload an image of tomato leaf", type=["jpg", "jpeg", "png"])
     if uploaded_file is not None:
         image = Image.open(uploaded_file)
-        predicted_class, confidence, _ = predict_disease_and_generate_heatmap(image)
-        st.image(image, caption='Tomato Leaf Image', use_column_width=True)
-        
-        # Replace this with your actual disease mask
-        disease_mask = np.random.rand(image.shape[0], image.shape[1])  # Example random mask, replace with actual mask
-        
-        # Generate and display heatmap
-        heatmap_fig = generate_heatmap(np.array(image), disease_mask)
-        st.pyplot(heatmap_fig)
+        predicted_class, confidence, medicine = predict_disease_and_generate_heatmap(image)
+        st.write(f"Prediction: {predicted_class}")
+        st.write(f"Confidence: {confidence}")
+        st.write("Medicine for quick treatment:")
+        st.info(medicine)
 
 
 # Function to display heatmap page

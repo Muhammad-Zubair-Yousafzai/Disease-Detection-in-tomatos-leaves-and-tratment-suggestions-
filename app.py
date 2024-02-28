@@ -77,7 +77,28 @@ def generate_heatmap(image, disease_mask):
     plt.imshow(disease_heatmap, alpha=0.5)
     plt.axis('off')
     return plt.gcf()
+# Function to generate 3D surface plot
+def generate_surface_plot(disease):
+    # Generate example data (replace with actual data)
+    x = np.linspace(0, 10, 100)
+    y = np.linspace(0, 10, 100)
+    X, Y = np.meshgrid(x, y)
+    Z = np.sin(X) + np.cos(Y)
+    
+    # Create a 3D figure
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
 
+    # Plot the surface
+    ax.plot_surface(X, Y, Z, cmap='viridis')
+
+    # Set labels and title
+    ax.set_xlabel('X Label')
+    ax.set_ylabel('Y Label')
+    ax.set_zlabel('Z Label')
+    ax.set_title(f'3D Surface Plot of {disease}')
+
+    return fig
 
 # Function to predict disease and generate heatmap
 def predict_disease_and_generate_heatmap(image):

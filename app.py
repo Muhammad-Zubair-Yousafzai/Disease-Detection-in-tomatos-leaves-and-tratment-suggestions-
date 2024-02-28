@@ -143,7 +143,14 @@ def heatmap_page():
 # Function to display 3D surface plot page
 def surface_plot_page():
     st.header("3D Surface Plot")
-    st.write("This page will display a 3D surface plot.")
+    disease = st.text_input("Enter the detected disease:", "Tomato_Bacterial_spot")
+    
+    # Button to generate surface plot
+    if st.button("Generate 3D Surface Plot"):
+        # Generate and display surface plot
+        surface_plot_fig = generate_surface_plot(disease)
+        st.pyplot(surface_plot_fig)
+
 
 
 # Main code

@@ -1,138 +1,49 @@
 import streamlit as st
+import tensorflow as tf
+from tensorflow.keras.models import load_model
 from PIL import Image
 import numpy as np
-import matplotlib.pyplot as plt
-from matplotlib.colors import LinearSegmentedColormap
-from keras.models import load_model
 
-# Custom CSS styles
-CUSTOM_CSS = """
-<style>
-h1 {
-    color: #FF5733;
-    text-align: center;
-}
-h2 {
-    color: #FF5733;
-}
-.file-upload-btn {
-    background-color: #FF5733;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 5px;
-    border: none;
-    cursor: pointer;
-}
-.file-upload-btn:hover {
-    background-color: #D35400;
-}
-</style>
-"""
+# Load the trained model
+model = load_model('Tomato.h5')
 
-# Inject custom CSS into Streamlit
-st.markdown(CUSTOM_CSS, unsafe_allow_html=True)
+# Define class names
+class_names = ['Healthy', 'Gall Detected']
 
-# Load the pre-trained model and define class names
-MODEL = load_model("Tomato.h5")
-CLASS_NAMES = ['Tomato_Bacterial_spot',
-               'Tomato_Early_blight',
-               'Tomato_Late_blight',
-               'Tomato_Leaf_Mold',
-               'Tomato_Septoria_leaf_spot',
-               'Tomato_Spider_mites_Two_spotted_spider_mite',
-               'Tomato__Target_Spot',
-               'Tomato__Tomato_YellowLeaf__Curl_Virus',
-               'Tomato__Tomato_mosaic_virus',
-               'Tomato_healthy']
+# Function to preprocess the uploaded image
+def preprocess_image(image):
+    image = image.resize((256, 256))
+    image = np.array(image) / 255.0
+    image = np.expand_dims(image, axis=0)
+    return image
 
-# Function to display medicine recommendations
-def display_medicine(predicted_class):
-    recommendations = {
-        'Tomato_Bacterial_spot': 'A plant with bacterial spot cannot be cured. Remove symptomatic plants from the field or greenhouse to prevent the spread of bacteria to healthy plants. Burn, bury, or hot compost the affected plants and DO NOT eat symptomatic fruit.',
-        'Tomato_Early_blight': 'Cure the plant quickly otherwise the disease can be spread, Thoroughly spray the plant (bottoms of leaves also) with Bonide Liquid Copper Fungicide concentrate or Bonide Tomato & Vegetable',
-        'Tomato_Late_blight': 'Spraying fungicides is the most effective way to prevent late blight. For conventional gardeners and commercial producers, protectant fungicides such as chlorothalonil (e.g., Bravo, Echo, Equus, or Daconil) and Mancozeb (Manzate) can be used.',
-        'Tomato_Leaf_Mold': 'Baking soda solution: Mix 1 tablespoon baking soda and ½ teaspoon liquid soap such as Castile soap (not detergent) in 1 gallon of water. Spray liberally, getting top and bottom leaf surfaces and any affected areas.',
-        'Tomato_Septoria_leaf_spot': 'Fungicides with active ingredients such as chlorothalonil, copper, or mancozeb will help reduce disease, but they must be applied before disease occurs as they can only provide preventative protection. They will not cure the plant. If the disease has spread then remove the plants',
-        'Tomato_Spider_mites_Two_spotted_spider_mite': 'Aiming a hard stream of water at infested plants to knock spider mites off the plants. Other options include insecticidal soaps, horticultural oils, or neem oil.',
-        'Tomato__Target_Spot': 'Products containing chlorothalonil, mancozeb, and copper oxychloride have been shown to provide good control of target spot in research trials.',
-        'Tomato__Tomato_YellowLeaf__Curl_Virus': 'Use a neonicotinoid insecticide, such as dinotefuran (Venom) imidacloprid (AdmirePro, Alias, Nuprid, Widow, and others) or thiamethoxam (Platinum), as a soil application or through the drip irrigation system at transplanting of tomatoes or peppers.',
-        'Tomato__Tomato_mosaic_virus': 'Remove all infected plants and destroy them. Do NOT put them in the compost pile, as the virus may persist in infected plant matter. Monitor the rest of your plants closely, especially those that were located near infected plants. Disinfect gardening tools after every use.',
-        'Tomato_healthy': 'Your plant is healthy, there is no need to apply medicines, please take care of your plants, if any disease occurs, then cure it fast and remove the infected leaves.'
-    }
-    return recommendations.get(predicted_class, "No recommendation available for this class.")
+# Function to make predictions
+def predict(model, image):
+    predictions = model.predict(image)
+    predicted_class = class_names[np.argmax(predictions[0])]
+    confidence = round(100 * (np.max(predictions[0])), 2)
+    return predicted_class, confidence
 
+# Streamlit app
+st.title("Tomato Leaf Disease Detection")
 
-# Function to generate heatmap
-def generate_heatmap(image, disease_mask):
-    # Apply colormap to disease mask
-    cmap = LinearSegmentedColormap.from_list('custom', [(0, 'green'), (1, 'red')])
-    disease_heatmap = cmap(disease_mask)
+st.write("Upload an image of a leaf ")
 
-    # Overlay heatmap on image
-    overlaid_image = Image.fromarray((image * 255).astype(np.uint8))
-    overlaid_image.putalpha(128)  # Set opacity to 50%
-    overlaid_image = overlaid_image.convert("RGB")
+# Image upload
+uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
 
-    plt.imshow(overlaid_image)
-    plt.imshow(disease_heatmap, alpha=0.5)
-    plt.axis('off')
-    return plt.gcf()
+if uploaded_file is not None:
+    image = Image.open(uploaded_file)
+    st.image(image, caption='Uploaded Image', use_column_width=True)
+    st.write("")
+    st.write("Classifying...")
 
+    # Preprocess the image
+    processed_image = preprocess_image(image)
 
-# Function to predict disease and generate heatmap
-def predict_disease_and_generate_heatmap(image):
-    # Resize image
-    image_resized = image.resize((256, 256))
+    # Make prediction
+    predicted_class, confidence = predict(model, processed_image)
 
-    # Convert image to numpy array
-    img_array = np.array(image_resized)
+    st.write(f"Predicted class: {predicted_class}")
+    st.write(f"Confidence: {confidence}%")
 
-    # Get predictions
-    predictions = MODEL.predict(np.expand_dims(img_array, 0))
-    predicted_class = CLASS_NAMES[np.argmax(predictions[0])]
-    confidence = np.max(predictions[0])
-
-    return predicted_class, confidence, display_medicine(predicted_class)
-
-
-# Function to display detection page
-def detection_page():
-    st.header("Detect")
-    uploaded_file = st.file_uploader("Upload an image of tomato leaf", type=["jpg", "jpeg", "png"])
-    if uploaded_file is not None:
-        image = Image.open(uploaded_file)
-        predicted_class, confidence, medicine = predict_disease_and_generate_heatmap(image)
-        st.write(f"Prediction: {predicted_class}")
-        st.write(f"Confidence: {confidence}")
-        st.write("Medicine for quick treatment:")
-        st.info(medicine)
-
-
-# Function to display heatmap page
-def heatmap_page():
-    st.header("Heatmap")
-    uploaded_file = st.file_uploader("Upload an image of tomato leaf", type=["jpg", "jpeg", "png"])
-    if uploaded_file is not None:
-        image = Image.open(uploaded_file)
-        predicted_class, confidence, _ = predict_disease_and_generate_heatmap(image)
-        st.image(image, caption='Tomato Leaf Image', use_column_width=True)
-        st.write(f"Heatmap for {predicted_class}")
-
-
-# Function to display 3D surface plot page
-def surface_plot_page():
-    st.header("3D Surface Plot")
-    st.write("This page will display a 3D surface plot.")
-
-
-# Main code
-st.sidebar.title("Navigation")
-tabs = ["Detect", "Heatmap", "3D Surface Plot"]
-choice = st.sidebar.radio("Go to", tabs)
-
-if choice == "Detect":
-    detection_page()
-elif choice == "Heatmap":
-    heatmap_page()
-elif choice == "3D Surface Plot":
-    surface_plot_page()
